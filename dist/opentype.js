@@ -7653,7 +7653,15 @@
 	 */
 	Position.prototype.getKerningTables = function(script, language) {
 	    if (this.font.tables.gpos) {
-	        return this.getLookupTables(script, language, 'kern', 2);
+	        var featureTable = this.getFeatureTable(script, language, 'kern');
+	        return this.getLookupTables(
+	            script,
+	            language,
+	            'kern',
+	            featureTable && featureTable.lookupListIndexes.length
+	                ? this.font.tables.gpos.lookups[featureTable.lookupListIndexes[0]].lookupType
+	                : 2
+	        );
 	    }
 	};
 
@@ -13915,7 +13923,10 @@
 	subtableParsers$1[6] = function parseLookup6() { return { error: 'GPOS Lookup 6 not supported' }; };
 	subtableParsers$1[7] = function parseLookup7() { return { error: 'GPOS Lookup 7 not supported' }; };
 	subtableParsers$1[8] = function parseLookup8() { return { error: 'GPOS Lookup 8 not supported' }; };
-	subtableParsers$1[9] = function parseLookup9() { return { error: 'GPOS Lookup 9 not supported' }; };
+	subtableParsers$1[9] = function parseLookup9() {
+	    check.argument(this.parseUShort() === 1, 'GPOS lookup type 9 format must be 1.');
+	    return this.parsePointer32(subtableParsers$1[this.parseUShort()]);
+	};
 
 	// https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
 	function parseGposTable(data, start) {
@@ -14355,7 +14366,6 @@
 	    hmtx.parse(font, hmtxTable.data, hmtxTable.offset, font.numberOfHMetrics, font.numGlyphs, font.glyphs, opt);
 	    addGlyphNames(font, opt);
 
-	    debugger;
 	    if (kernTableEntry) {
 	        var kernTable = uncompressTable(data, kernTableEntry);
 	        font.kerningPairs = kern.parse(kernTable.data, kernTable.offset);

@@ -334,7 +334,6 @@ function parseBuffer(buffer, opt) {
     hmtx.parse(font, hmtxTable.data, hmtxTable.offset, font.numberOfHMetrics, font.numGlyphs, font.glyphs, opt);
     addGlyphNames(font, opt);
 
-    debugger;
     if (kernTableEntry) {
         const kernTable = uncompressTable(data, kernTableEntry);
         font.kerningPairs = kern.parse(kernTable.data, kernTable.offset);

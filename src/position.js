@@ -70,7 +70,15 @@ Position.prototype.getKerningValue = function(kerningLookups, leftIndex, rightIn
  */
 Position.prototype.getKerningTables = function(script, language) {
     if (this.font.tables.gpos) {
-        return this.getLookupTables(script, language, 'kern', 2);
+        const featureTable = this.getFeatureTable(script, language, 'kern');
+        return this.getLookupTables(
+            script,
+            language,
+            'kern',
+            featureTable && featureTable.lookupListIndexes.length
+                ? this.font.tables.gpos.lookups[featureTable.lookupListIndexes[0]].lookupType
+                : 2,
+        );
     }
 };
 
