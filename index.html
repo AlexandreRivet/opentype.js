@@ -34,7 +34,7 @@
     <span class="info" id="font-name">Fira Sans</span>
     <canvas id="preview" width="940" height="300" class="text"></canvas>
     <div id="message"></div>
-    <input type="text" class="text-input" onkeyup="renderText()" value="Hello, World!"
+    <input type="text" class="text-input" onkeyup="renderText()" value="New York"
            autofocus id="textField">
     <label>Font Size<input type="range" min="6" max="500" step="2" value="150" id="font-size-range" autocomplete="off"><span id="fontSize">150</span></label>
     <label><input type="checkbox" onchange="drawPointsChanged(this)" checked="checked">Draw Points</label>
@@ -298,7 +298,10 @@ function onReadFile(e) {
     reader.readAsArrayBuffer(file);
 }
 
-var fontFileName = 'fonts/FiraSansMedium.woff';
+var queryString = window.location.search;
+var urlParams = new URLSearchParams(queryString);
+var fontFamily = urlParams.get('font');
+var fontFileName = 'fonts/' + (fontFamily !== null ? fontFamily : 'FiraSansMedium.woff');
 
 document.getElementById('font-name').innerHTML = fontFileName.split('/')[1];
 

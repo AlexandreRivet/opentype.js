@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var http = require('http');
+var urlParser = require('url');
 var path = require('path');
 var rollup = require('rollup');
 var rollupConfig = require('../rollup.config');
@@ -19,13 +20,14 @@ var CONTENT_TYPES = {
 
 http.createServer(function(req, res) {
     var rewrite = '';
-    var url = req.url.substring(1);
-    if (url.length === 0) {
+    var parsed = urlParser.parse(req.url, true);
+    var url = parsed.pathname;
+    if (url.substring(1).length === 0) {
         url = 'index.html';
         rewrite = ' -> ' + url;
     }
 
-    console.log('HTTP', req.url, rewrite);
+    console.log('HTTP', url, rewrite);
     var filePath = './' + url;
     fs.readFile(filePath, function(err, data) {
         if (err) {
